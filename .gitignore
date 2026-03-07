@@ -1,0 +1,38 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfstate
+terraform.tfstate.backup
+crash.log
+
+# Ignore tfvars (may contain secrets). Allow examples.
+*.tfvars
+!*.tfvars.example
+
+# Backend config may contain environment-specific settings; keep out of VCS if sensitive
+backend.tf
+
+# Local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Sensitive environment files
+.env
+.env.local
+.aws/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and caches
+*.log
+__pycache__/
