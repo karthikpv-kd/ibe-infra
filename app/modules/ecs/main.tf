@@ -158,12 +158,27 @@ resource "aws_ecs_task_definition" "room_search" {
       ]
 
       environment = [
-        { name = "TENANT_SERVICE_URL", value = "http://tenant-service:8080" },
+        { name = "TENANT_SERVICE_URL",   value = "http://tenant-service:8080" },
+        { name = "DB_HOST",              value = var.db_host },
+        { name = "DB_PORT",              value = tostring(var.db_port) },
+        { name = "DB_NAME",              value = var.db_name },
+        { name = "SPRING_SQL_INIT_MODE", value = "always" }
         # REDIS DISABLED — uncomment when ElastiCache is re-enabled
         # { name = "REDIS_HOST",             value = var.redis_host },
         # { name = "REDIS_PORT",             value = tostring(var.redis_port) },
         # { name = "SPRING_DATA_REDIS_HOST", value = var.redis_host },
         # { name = "SPRING_DATA_REDIS_PORT", value = tostring(var.redis_port) }
+      ]
+
+      secrets = [
+        {
+          name      = "DB_USERNAME"
+          valueFrom = "${var.secret_arn}:username::"
+        },
+        {
+          name      = "DB_PASSWORD"
+          valueFrom = "${var.secret_arn}:password::"
+        }
       ]
 
       logConfiguration = {
@@ -236,10 +251,6 @@ resource "aws_ecs_service" "room_search" {
   launch_type                        = "FARGATE"
 
   health_check_grace_period_seconds  = 300
-
-  lifecycle {
-    ignore_changes = [task_definition]
-  }
 
   network_configuration {
     subnets          = var.private_subnet_ids
