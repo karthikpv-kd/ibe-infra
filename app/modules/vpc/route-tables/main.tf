@@ -14,8 +14,6 @@ resource "aws_route_table_association" "public_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-# Private route table has no default internet route.
-# ECS tasks reach AWS services exclusively through VPC endpoints.
 resource "aws_route_table" "private_rt" {
   vpc_id = var.vpc_id
 

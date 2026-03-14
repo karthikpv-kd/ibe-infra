@@ -1,4 +1,4 @@
-# ─── VPC ───
+
 module "vpc" {
   source = "./modules/vpc"
 
@@ -7,7 +7,6 @@ module "vpc" {
   tags        = local.global_tags
 }
 
-# ─── Security Groups ───
 module "security" {
   source = "./modules/security"
 
@@ -18,7 +17,6 @@ module "security" {
   tags = local.global_tags
 }
 
-# ─── ECR Repositories ───
 module "ecr" {
   source = "./modules/ecr"
 
@@ -26,7 +24,6 @@ module "ecr" {
   tags        = local.global_tags
 }
 
-# ─── RDS PostgreSQL ───
 module "rds" {
   source = "./modules/rds"
 
@@ -43,7 +40,6 @@ module "rds" {
   tags = local.global_tags
 }
 
-# ─── Secrets Manager ───
 module "secrets" {
   source = "./modules/secrets"
 
@@ -56,7 +52,6 @@ module "secrets" {
   tags = local.global_tags
 }
 
-# ─── Application Load Balancer ───
 module "alb" {
   source = "./modules/alb"
 
@@ -79,7 +74,6 @@ module "alb" {
 #   tags = local.global_tags
 # }
 
-# ─── ECS Fargate ───
 module "ecs" {
   source = "./modules/ecs"
 
@@ -105,7 +99,6 @@ module "ecs" {
   tags = local.global_tags
 }
 
-# ─── Bastion Host ───
 module "bastion" {
   source = "./modules/bastion"
 
@@ -118,7 +111,6 @@ module "bastion" {
   tags = local.global_tags
 }
 
-# ─── CI/CD Pipelines ───
 module "cicd" {
   source = "./modules/cicd"
 

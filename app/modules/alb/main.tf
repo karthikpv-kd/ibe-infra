@@ -1,4 +1,3 @@
-# ─── Application Load Balancer ───
 resource "aws_lb" "this" {
   name               = "${var.name_prefix}-alb"
   internal           = false
@@ -9,7 +8,6 @@ resource "aws_lb" "this" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-alb" })
 }
 
-# ─── Default Target Group (returns 404 for unmatched paths) ───
 resource "aws_lb_target_group" "default" {
   name        = "${var.name_prefix}-default-tg"
   port        = 8080
@@ -20,7 +18,6 @@ resource "aws_lb_target_group" "default" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-default-tg" })
 }
 
-# ─── Tenant Service Target Group ───
 resource "aws_lb_target_group" "tenant" {
   name        = "${var.name_prefix}-tenant-tg"
   port        = 8080
@@ -41,7 +38,6 @@ resource "aws_lb_target_group" "tenant" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-tenant-tg" })
 }
 
-# ─── Room Search Service Target Group ───
 resource "aws_lb_target_group" "room_search" {
   name        = "${var.name_prefix}-room-tg"
   port        = 8080
@@ -62,7 +58,6 @@ resource "aws_lb_target_group" "room_search" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-room-tg" })
 }
 
-# ─── HTTP Listener ───
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.this.arn
   port              = 80
@@ -76,7 +71,6 @@ resource "aws_lb_listener" "http" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-http-listener" })
 }
 
-# ─── Path-based routing: tenant-service paths ───
 resource "aws_lb_listener_rule" "tenant" {
   listener_arn = aws_lb_listener.http.arn
   priority     = 100
@@ -95,7 +89,6 @@ resource "aws_lb_listener_rule" "tenant" {
   tags = var.tags
 }
 
-# ─── Path-based routing: room-search-service paths ───
 resource "aws_lb_listener_rule" "room_search" {
   listener_arn = aws_lb_listener.http.arn
   priority     = 200

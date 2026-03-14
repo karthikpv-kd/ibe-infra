@@ -1,19 +1,14 @@
-# ─── ECS Cluster ───
+
 resource "aws_ecs_cluster" "this" {
   name = "${var.name_prefix}-cluster"
   tags = merge(var.tags, { Name = "${var.name_prefix}-cluster" })
 }
 
-# ─── Service Connect Namespace ───
-# Creates a Cloud Map HTTP namespace so ECS services can reach each other
-# via short DNS names (e.g. http://tenant-service:8080) entirely within
-# the VPC, without going through the public ALB.
 resource "aws_service_discovery_http_namespace" "this" {
   name = "${var.name_prefix}.local"
   tags = var.tags
 }
 
-# ─── CloudWatch Log Groups ───
 resource "aws_cloudwatch_log_group" "tenant" {
   name              = "/ecs/${var.name_prefix}-tenant-service"
   retention_in_days = 7
@@ -26,7 +21,6 @@ resource "aws_cloudwatch_log_group" "room_search" {
   tags              = var.tags
 }
 
-# ─── ECS Task Execution Role (pulling images, writing logs, reading secrets) ───
 data "aws_iam_policy_document" "ecs_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -64,7 +58,6 @@ resource "aws_iam_role_policy" "ecs_secrets_access" {
   policy = data.aws_iam_policy_document.ecs_secrets_policy.json
 }
 
-# ─── ECS Task Role (for application-level AWS API calls) ───
 resource "aws_iam_role" "ecs_task_role" {
   name               = "${var.name_prefix}-ecs-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
@@ -87,7 +80,6 @@ resource "aws_iam_role_policy" "ecs_task_secrets" {
   policy = data.aws_iam_policy_document.ecs_task_secrets.json
 }
 
-# ─── Tenant Service Task Definition ───
 resource "aws_ecs_task_definition" "tenant" {
   family                   = "${var.name_prefix}-tenant-service"
   network_mode             = "awsvpc"
@@ -107,7 +99,6 @@ resource "aws_ecs_task_definition" "tenant" {
         {
           containerPort = 8080
           protocol      = "tcp"
-          # Named port required for ECS Service Connect
           name          = "http"
         }
       ]
@@ -144,7 +135,6 @@ resource "aws_ecs_task_definition" "tenant" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-tenant-service-task" })
 }
 
-# ─── Room Search Service Task Definition ───
 resource "aws_ecs_task_definition" "room_search" {
   family                   = "${var.name_prefix}-room-search-service"
   network_mode             = "awsvpc"
@@ -190,15 +180,13 @@ resource "aws_ecs_task_definition" "room_search" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-room-search-service-task" })
 }
 
-# ─── Tenant Service ECS Service ───
 resource "aws_ecs_service" "tenant" {
   name                               = "${var.name_prefix}-tenant-service"
   cluster                            = aws_ecs_cluster.this.id
   task_definition                    = aws_ecs_task_definition.tenant.arn
   desired_count                      = 1
   launch_type                        = "FARGATE"
-  # Give Spring Boot 120 s to complete JVM startup before ALB health check
-  # results can trigger a task replacement.
+
   health_check_grace_period_seconds  = 300
 
   lifecycle {
@@ -222,8 +210,6 @@ resource "aws_ecs_service" "tenant" {
     rollback = false
   }
 
-  # Expose tenant-service to other services in the cluster under the
-  # DNS name "tenant-service" on port 8080 via Service Connect.
   service_connect_configuration {
     enabled   = true
     namespace = aws_service_discovery_http_namespace.this.arn
@@ -242,15 +228,13 @@ resource "aws_ecs_service" "tenant" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-tenant-service" })
 }
 
-# ─── Room Search Service ECS Service ───
 resource "aws_ecs_service" "room_search" {
   name                               = "${var.name_prefix}-room-search-service"
   cluster                            = aws_ecs_cluster.this.id
   task_definition                    = aws_ecs_task_definition.room_search.arn
   desired_count                      = 1
   launch_type                        = "FARGATE"
-  # Give Spring Boot 120 s to complete JVM startup before ALB health check
-  # results can trigger a task replacement.
+
   health_check_grace_period_seconds  = 300
 
   lifecycle {
@@ -274,8 +258,6 @@ resource "aws_ecs_service" "room_search" {
     rollback = false
   }
 
-  # Join the same Service Connect namespace as a client so it can reach
-  # tenant-service at http://tenant-service:8080 inside the VPC.
   service_connect_configuration {
     enabled   = true
     namespace = aws_service_discovery_http_namespace.this.arn

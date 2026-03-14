@@ -1,4 +1,3 @@
-# ─── ALB Security Group ───
 resource "aws_security_group" "alb" {
   name        = "${var.name_prefix}-alb-sg"
   description = "Allow HTTP from internet to ALB"
@@ -22,7 +21,6 @@ resource "aws_security_group" "alb" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-alb-sg" })
 }
 
-# ─── ECS Security Group ───
 resource "aws_security_group" "ecs" {
   name        = "${var.name_prefix}-ecs-sg"
   description = "Allow traffic from ALB to ECS tasks"
@@ -62,7 +60,6 @@ resource "aws_security_group" "ecs" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-ecs-sg" })
 }
 
-# ─── Bastion Security Group ───
 resource "aws_security_group" "bastion" {
   name        = "${var.name_prefix}-bastion-sg"
   description = "Allow SSH to bastion host"
@@ -86,7 +83,6 @@ resource "aws_security_group" "bastion" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-bastion-sg" })
 }
 
-# ─── RDS Security Group ───
 resource "aws_security_group" "rds" {
   name        = "${var.name_prefix}-rds-sg"
   description = "Allow PostgreSQL from ECS and Bastion"

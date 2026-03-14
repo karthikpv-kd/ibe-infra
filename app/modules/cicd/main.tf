@@ -24,7 +24,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "artifacts_encrypt
   }
 }
 
-# ─── CodeBuild IAM Role ───
 data "aws_iam_policy_document" "codebuild_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -126,7 +125,6 @@ resource "aws_iam_role_policy" "codebuild_policy" {
   policy = data.aws_iam_policy_document.codebuild_policy.json
 }
 
-# ─── CodeBuild Projects ───
 resource "aws_codebuild_project" "tenant_service" {
   name          = "${var.name_prefix}-tenant-service-build"
   description   = "Build and push tenant-service Docker image to ECR"
@@ -172,8 +170,6 @@ resource "aws_codebuild_project" "tenant_service" {
 
   tags = merge(var.tags, { Name = "${var.name_prefix}-tenant-service-build" })
 }
-
-# ─── NOTE: CodePipeline pipelines are created manually in the AWS Console ───
 
 resource "aws_codebuild_project" "room_search_service" {
   name          = "${var.name_prefix}-room-search-service-build"

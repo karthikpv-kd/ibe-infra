@@ -13,7 +13,6 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-# ─── IAM Role for Bastion ───
 resource "aws_iam_role" "bastion" {
   name = "${var.name_prefix}-bastion-role"
 

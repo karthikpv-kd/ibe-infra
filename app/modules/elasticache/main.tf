@@ -1,4 +1,3 @@
-# ─── ElastiCache Subnet Group ───
 resource "aws_elasticache_subnet_group" "this" {
   name       = "${var.name_prefix}-redis-subnet-group"
   subnet_ids = var.private_subnet_ids
@@ -6,7 +5,6 @@ resource "aws_elasticache_subnet_group" "this" {
   tags = merge(var.tags, { Name = "${var.name_prefix}-redis-subnet-group" })
 }
 
-# ─── ElastiCache Redis Replication Group ───
 resource "aws_elasticache_replication_group" "this" {
   replication_group_id       = "${var.name_prefix}-redis"
   description                = "Redis cache for ${var.name_prefix}"
