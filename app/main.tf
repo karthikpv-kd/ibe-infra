@@ -68,6 +68,17 @@ module "alb" {
   tags = local.global_tags
 }
 
+# ─── ElastiCache Redis ─── DISABLED — uncomment to re-enable
+# module "elasticache" {
+#   source = "./modules/elasticache"
+#
+#   name_prefix             = local.prefix
+#   private_subnet_ids      = module.vpc.private_subnet_ids
+#   redis_security_group_id = module.security.redis_security_group_id
+#
+#   tags = local.global_tags
+# }
+
 # ─── ECS Fargate ───
 module "ecs" {
   source = "./modules/ecs"
@@ -88,6 +99,8 @@ module "ecs" {
   name_prefix                 = local.prefix
   cpu                         = var.ecs_task_cpu
   memory                      = var.ecs_task_memory
+  # redis_host                  = module.elasticache.redis_primary_endpoint  # REDIS DISABLED
+  # redis_port                  = module.elasticache.redis_port               # REDIS DISABLED
 
   tags = local.global_tags
 }

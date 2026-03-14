@@ -86,3 +86,15 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# REDIS DISABLED — uncomment when ElastiCache is re-enabled
+# variable "redis_host" {
+#   description = "ElastiCache Redis primary endpoint"
+#   type        = string
+# }
+#
+# variable "redis_port" {
+#   description = "ElastiCache Redis port"
+#   type        = number
+#   default     = 6379
+# }

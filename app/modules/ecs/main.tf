@@ -168,7 +168,12 @@ resource "aws_ecs_task_definition" "room_search" {
       ]
 
       environment = [
-        { name = "TENANT_SERVICE_URL", value = "http://tenant-service:8080" }
+        { name = "TENANT_SERVICE_URL", value = "http://tenant-service:8080" },
+        # REDIS DISABLED — uncomment when ElastiCache is re-enabled
+        # { name = "REDIS_HOST",             value = var.redis_host },
+        # { name = "REDIS_PORT",             value = tostring(var.redis_port) },
+        # { name = "SPRING_DATA_REDIS_HOST", value = var.redis_host },
+        # { name = "SPRING_DATA_REDIS_PORT", value = tostring(var.redis_port) }
       ]
 
       logConfiguration = {
@@ -195,6 +200,10 @@ resource "aws_ecs_service" "tenant" {
   # Give Spring Boot 120 s to complete JVM startup before ALB health check
   # results can trigger a task replacement.
   health_check_grace_period_seconds  = 300
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 
   network_configuration {
     subnets          = var.private_subnet_ids
@@ -243,6 +252,10 @@ resource "aws_ecs_service" "room_search" {
   # Give Spring Boot 120 s to complete JVM startup before ALB health check
   # results can trigger a task replacement.
   health_check_grace_period_seconds  = 300
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 
   network_configuration {
     subnets          = var.private_subnet_ids

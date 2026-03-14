@@ -13,3 +13,8 @@ output "rds_security_group_id" {
 output "bastion_security_group_id" {
   value = aws_security_group.bastion.id
 }
+
+# REDIS DISABLED — uncomment when ElastiCache is re-enabled
+# output "redis_security_group_id" {
+#   value = aws_security_group.redis.id
+# }

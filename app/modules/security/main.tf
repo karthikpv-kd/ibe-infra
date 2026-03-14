@@ -117,3 +117,35 @@ resource "aws_security_group" "rds" {
 
   tags = merge(var.tags, { Name = "${var.name_prefix}-rds-sg" })
 }
+
+# ─── Redis (ElastiCache) Security Group ─── DISABLED — uncomment to re-enable
+# resource "aws_security_group" "redis" {
+#   name        = "${var.name_prefix}-redis-sg"
+#   description = "Allow Redis from ECS tasks"
+#   vpc_id      = var.vpc_id
+#
+#   ingress {
+#     description     = "Redis from ECS tasks"
+#     from_port       = 6379
+#     to_port         = 6379
+#     protocol        = "tcp"
+#     security_groups = [aws_security_group.ecs.id]
+#   }
+#
+#   ingress {
+#     description     = "Redis from Bastion for debugging"
+#     from_port       = 6379
+#     to_port         = 6379
+#     protocol        = "tcp"
+#     security_groups = [aws_security_group.bastion.id]
+#   }
+#
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#
+#   tags = merge(var.tags, { Name = "${var.name_prefix}-redis-sg" })
+# }

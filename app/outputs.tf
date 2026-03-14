@@ -10,6 +10,12 @@ output "rds_endpoint" {
   value = module.rds.rds_endpoint
 }
 
+# REDIS DISABLED — uncomment when ElastiCache is re-enabled
+# output "redis_endpoint" {
+#   description = "ElastiCache Redis primary endpoint"
+#   value       = module.elasticache.redis_primary_endpoint
+# }
+
 output "secret_arn" {
   value = module.secrets.secret_arn
 }
