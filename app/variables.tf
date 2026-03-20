@@ -62,4 +62,25 @@ variable "bastion_ingress_cidr" {
   default     = "0.0.0.0/0"
 }
 
+variable "ses_sender_email" {
+  description = "Verified SES email address used as the From address for booking confirmations"
+  type        = string
+}
+
+variable "ses_receiver_email" {
+  description = "Verified SES email address used as the To/recipient address for booking confirmations"
+  type        = string
+}
+
+variable "ses_sender_email_arn" {
+  description = "Full ARN of the verified SES identity. Format: arn:aws:ses:REGION:ACCOUNT_ID:identity/EMAIL"
+  type        = string
+}
+
+variable "ses_receiver_email_arn" {
+  description = "Full ARN of the verified SES identity. Format: arn:aws:ses:REGION:ACCOUNT_ID:identity/EMAIL"
+  type        = string
+}
+
+
 

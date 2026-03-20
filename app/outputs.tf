@@ -69,3 +69,23 @@ output "logs_endpoint_id" {
   description = "ID of the CloudWatch Logs interface endpoint"
   value       = module.vpc.logs_endpoint_id
 }
+
+output "booking_email_queue_url" {
+  description = "URL of the booking confirmation email SQS queue"
+  value       = module.sqs.queue_url
+}
+
+output "booking_email_queue_arn" {
+  description = "ARN of the booking confirmation email SQS queue"
+  value       = module.sqs.queue_arn
+}
+
+output "booking_email_dlq_url" {
+  description = "URL of the DLQ for failed booking emails"
+  value       = module.sqs.dlq_url
+}
+
+output "email_lambda_name" {
+  description = "Name of the email sender Lambda function"
+  value       = module.email_lambda.lambda_function_name
+}
