@@ -144,6 +144,7 @@ resource "aws_ecs_task_definition" "room_search" {
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
+
   container_definitions = jsonencode([
     {
       name      = "room-search-service"
@@ -251,6 +252,10 @@ resource "aws_ecs_service" "room_search" {
   launch_type                        = "FARGATE"
 
   health_check_grace_period_seconds  = 300
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 
   network_configuration {
     subnets          = var.private_subnet_ids

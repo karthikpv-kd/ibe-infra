@@ -121,3 +121,33 @@ module "cicd" {
 
   tags = local.global_tags
 }
+
+module "sqs" {
+  source      = "./modules/sqs"
+  name_prefix = local.prefix
+  tags        = local.global_tags
+}
+
+module "email_lambda" {
+  source      = "./modules/email_lambda"
+  name_prefix = local.prefix
+  tags        = local.global_tags
+
+  aws_region         = var.aws_region
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+
+  sqs_queue_arn = module.sqs.queue_arn
+  sqs_queue_url = module.sqs.queue_url
+
+  ses_sender_email     = var.ses_sender_email
+  ses_sender_email_arn = var.ses_sender_email_arn
+
+  ses_receiver_email     = var.ses_receiver_email
+  ses_receiver_email_arn = var.ses_receiver_email_arn
+
+  lambda_zip_path              = "./lambda/email_sender.zip"
+  ecs_lambda_security_group_id = module.security.ecs_security_group_id
+
+  depends_on = [module.sqs, module.vpc]
+}
